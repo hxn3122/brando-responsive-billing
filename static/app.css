@@ -1,0 +1,22 @@
+:root{--brand:#0B3D91;--gap:12px;--radius:14px;--bg:#ffffff;--text:#111;}
+html,body{background:var(--bg);color:var(--text);margin:0;padding:0;overflow-x:hidden;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;}
+.wrap{margin:12px auto;padding:12px;max-width:960px;}
+@media(min-width:768px){.wrap{margin:24px auto;padding:24px;}}
+.brandbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;}
+.brandbar h1{font-weight:800;color:var(--brand);font-size:clamp(18px,5vw,28px);margin:0;}
+.nav-btns{display:flex;gap:8px;flex-wrap:wrap;}
+.btn{display:inline-block;padding:.7rem 1rem;border-radius:var(--radius);background:#1F6FEB;color:#fff;text-decoration:none;font-weight:700;font-size:clamp(13px,3.5vw,16px);border:none;cursor:pointer}
+.btn.dark{background:#111;color:#fff}
+.form-grid{display:grid;grid-template-columns:1fr;gap:var(--gap);}
+@media(min-width:768px){.form-grid{grid-template-columns:1fr 1fr;}}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-weight:600;font-size:clamp(12px,3.5vw,14px)}
+.field input,.field textarea,.field select{width:100%;padding:12px 14px;border-radius:var(--radius);border:1px solid rgba(0,0,0,.18);font-size:clamp(14px,4vw,16px);background:#fff;color:#111}
+.field textarea{min-height:90px}
+.table{width:100%;border-collapse:collapse}
+.table th,.table td{padding:10px;border-bottom:1px solid rgba(0,0,0,.12)}
+@media(max-width:640px){.table thead{display:none}.table tr{display:block;padding:10px;border:1px solid rgba(0,0,0,.08);border-radius:var(--radius);margin-bottom:10px}.table td{display:flex;justify-content:space-between;gap:12px;border:none}.table td::before{content:attr(data-label);font-weight:700;color:#666}}
+.actions{position:sticky;bottom:10px;display:flex;gap:8px;flex-wrap:wrap;padding:10px;background:#f1f5ff;border-radius:var(--radius)}
+.actions .btn{flex:1 1 140px;text-align:center}
+.pdf-frame{width:100%;height:calc(100vh - 160px);border:none;border-radius:var(--radius);background:#f5f5f5}
+.muted{color:#666;font-size:.9rem}

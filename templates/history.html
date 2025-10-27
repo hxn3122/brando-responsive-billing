@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>History • {{ company_name }}</title>
+<link href="https://unpkg.com/modern-css-reset/dist/reset.min.css" rel="stylesheet"/>
+<style>
+  .brand-centered{display:flex;justify-content:center;align-items:center;}
+  .brand-centered h1{margin:0;color:#0B3D91;font-weight:800;letter-spacing:1px;}
+
+  body{font-family: ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial; background:#f5f7fb; color:#111;}
+  .wrap{max-width: 980px; margin: 32px auto; background:#fff; padding:24px; border-radius:16px; box-shadow: 0 10px 30px rgba(0,0,0,.06);}
+  h1{font-size:22px; margin-bottom:12px;}
+  table{width:100%; border-collapse: collapse;}
+  th, td{padding:10px 8px; border-bottom: 1px solid #e5e7eb;}
+  th{background:#0B3D91; color:#fff; text-align:left;}
+  a.btn{padding:6px 10px; border-radius:10px; background:#1F6FEB; color:#fff; text-decoration:none; font-weight:700}
+  .muted{color:#6b7280; font-size:12px;}
+</style>
+<link href="/static/app.css" rel="stylesheet"/></head>
+<body>
+<div class="wrap">
+<h1>{{ company_name }} — Invoices History</h1>
+<p><a class="btn" href="/history/export?format=csv">Export CSV</a> <a class="btn" href="/history/export?format=xlsx" style="margin-left:6px">Export Excel</a> <a class="btn" href="/loadsheets" style="margin-left:6px;background:#0B3D91">Load Sheets</a></p>
+<form method="GET" style="margin:10px 0; display:flex; gap:8px; flex-wrap:wrap"><input name="q" placeholder="Search by customer, invoice, phone, address" style="flex:1; padding:10px 12px; border:1px solid #ddd; border-radius:10px" value="{{ q or '' }}"/><input name="start_date" style="padding:10px 12px; border:1px solid #ddd; border-radius:10px" type="date" value="{{ start_date or '' }}"/><input name="end_date" style="padding:10px 12px; border:1px solid #ddd; border-radius:10px" type="date" value="{{ end_date or '' }}"/><button class="btn" type="submit">Filter</button><a class="btn" href="/history" style="background:#111">Reset</a></form><p class="muted">Click "View" to open the viewer with a print button.</p>
+<form action="/loadsheets/generate" id="ls-form" method="POST">
+<table>
+<thead>
+<tr>
+<th>Select</th>
+<th>Invoice #</th>
+<th>Customer</th>
+<th>Address</th><th>Phone (Primary)</th><th>Phone (Optional)</th>
+<th>Total (PKR)</th>
+<th>Created</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody>
+        {% for row in items %}
+        <tr>
+<td><input name="invoice_no" type="checkbox" value="{{ row.invoice_no }}"/></td>
+<td>{{ row.invoice_no }}</td>
+<td>{{ row.customer_name }}</td>
+<td>{{ row.customer_address }}</td>
+<td>{{ row.phone_primary }}</td>
+<td>{{ row.phone_secondary }}</td>
+<td style="text-align:right">{{ "%.2f"|format(row.total) }}</td>
+<td>{{ row.created_at }}</td>
+<td>
+<a class="btn" href="/viewer/{{ row.invoice_no }}" target="_blank">View</a>
+<a class="btn" href="/invoice/{{ row.invoice_no }}" style="background:#111;margin-left:6px" target="_blank">Download</a>
+</td>
+</tr>
+        {% else %}
+        <tr><td class="muted" colspan="6">No invoices yet.</td></tr>
+        {% endfor %}
+      </tbody>
+</table>
+<div style="margin-top:10px"><button class="btn" type="submit">Generate Load Sheet (Selected)</button></div>
+</form>
+<p style="margin-top:14px"><a class="btn" href="/">← Back</a></p>
+</div>
+</body>
+</html>

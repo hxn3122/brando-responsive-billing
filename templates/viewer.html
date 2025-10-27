@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Invoice {{ invoice_no }} • {{ company_name }}</title>
+<style>
+  body{margin:0; font-family: ui-sans-serif,system-ui,Segoe UI,Roboto;}
+  header{display:flex; align-items:center; justify-content:space-between; padding:10px 12px; border-bottom:1px solid #e5e7eb; background:#f8fafc;}
+  .btn{padding:10px 14px; border:none; border-radius:10px; background:#1F6FEB; color:#fff; font-weight:700; cursor:pointer;}
+  iframe{width:100%; height: calc(100vh - 60px); border:0;}
+</style>
+<link href="/static/app.css" rel="stylesheet"/></head>
+<body>
+<header>
+<div><strong>{{ company_name }}</strong> — Invoice #{{ invoice_no }}</div>
+<div>
+<button class="btn" onclick="printPDF()">Print / Save</button>
+<button class="btn" onclick="sharePDF()" style="margin-left:8px">Share</button>
+<a class="btn" href="/invoice/{{ invoice_no }}" style="text-decoration:none; margin-left:8px;" target="_blank">Open Raw PDF</a>
+</div>
+</header>
+<iframe class="pdf-frame" id="pdf" src="/invoice/{{ invoice_no }}"></iframe>
+<script>
+    function printPDF(){
+      const frame = document.getElementById('pdf');
+      frame.contentWindow.focus();
+      frame.contentWindow.print();
+    }
+  
+    async function sharePDF(){
+      const invoiceUrl = "/invoice/{{ invoice_no }}";
+      const fullUrl = window.location.origin + invoiceUrl;
+      try{
+        if (navigator.canShare && navigator.share) {
+          const resp = await fetch(invoiceUrl);
+          const blob = await resp.blob();
+          const file = new File([blob], "Invoice_{{ invoice_no }}.pdf", {type:"application/pdf"});
+          if (navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              title: "Invoice #{{ invoice_no }}",
+              text: "Invoice #{{ invoice_no }} from {{ company_name }}",
+              files: [file]
+            });
+            return;
+          }
+        }
+        const msg = encodeURIComponent("Invoice #{{ invoice_no }} from {{ company_name }}\n" + fullUrl);
+        const waBiz = "whatsapp://send?text=" + msg;
+        const waWeb = "https://wa.me/?text=" + msg;
+        window.location.href = waBiz;
+        setTimeout(()=>{ window.open(waWeb, "_blank"); }, 500);
+      }catch(e){
+        const waWeb = "https://wa.me/?text=" + encodeURIComponent("Invoice #{{ invoice_no }} from {{ company_name }}\n" + fullUrl);
+        window.open(waWeb, "_blank");
+      }
+    }
+    (function(){
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("share") === "1") {
+        setTimeout(()=>sharePDF(), 400);
+      }
+    })();
+  </script>
+</body>
+</html>

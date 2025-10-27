@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Load Sheets • {{ company_name }}</title>
+<link href="https://unpkg.com/modern-css-reset/dist/reset.min.css" rel="stylesheet"/>
+<style>
+  .brand-centered{display:flex;justify-content:center;align-items:center;}
+  .brand-centered h1{margin:0;color:#0B3D91;font-weight:800;letter-spacing:1px;}
+
+  body{font-family: ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial; background:#f5f7fb; color:#111;}
+  .wrap{max-width: 980px; margin: 32px auto; background:#fff; padding:24px; border-radius:16px; box-shadow: 0 10px 30px rgba(0,0,0,.06);}
+  h1{font-size:22px; margin-bottom:12px;}
+  table{width:100%; border-collapse: collapse;}
+  th, td{padding:10px 8px; border-bottom: 1px solid #e5e7eb;}
+  th{background:#0B3D91; color:#fff; text-align:left;}
+  a.btn{padding:6px 10px; border-radius:10px; background:#1F6FEB; color:#fff; text-decoration:none; font-weight:700}
+  .muted{color:#6b7280; font-size:12px;}
+  .top{display:flex; justify-content:space-between; align-items:center}
+</style>
+<link href="/static/app.css" rel="stylesheet"/></head>
+<body>
+<div class="wrap">
+<div class="top">
+<h1>{{ company_name }} — Load Sheets (last 7 days)</h1>
+<div>
+<a class="btn" href="/history">← Back to History</a>
+</div>
+</div>
+<p class="muted">Old load sheets older than 7 days are automatically deleted.</p>
+<table>
+<thead>
+<tr>
+<th>Code</th><th>ID</th>
+<th>Invoices</th>
+<th>Created</th>
+<th>Download</th><th>Share</th>
+</tr>
+</thead>
+<tbody>
+        {% for r in items %}
+        <tr>
+<td>{{ r.code }}</td><td>{{ r.id }}</td>
+<td>{{ ", ".join(r.invoice_nos) }}</td>
+<td>{{ r.created_at }}</td>
+<td>
+<a class="btn" href="/loadsheets/{{ r.id }}/pdf" target="_blank">PDF</a>
+<a class="btn" href="/loadsheets/{{ r.id }}/csv" style="background:#111;margin-left:6px">CSV</a>
+<a class="btn" href="/loadsheets/{{ r.id }}/xlsx" style="background:#0B3D91;margin-left:6px">Excel</a>
+</td>
+<td>
+<button class="btn" onclick="shareLoadSheet('{{ r.id }}')">Share</button>
+</td>
+</tr>
+        {% else %}
+        <tr><td class="muted" colspan="4">No load sheets yet.</td></tr>
+        {% endfor %}
+      </tbody>
+</table>
+</div>
+<script>
+async function shareLoadSheet(id){
+  const url = `/loadsheets/${id}/pdf`;
+  const fullUrl = window.location.origin + url;
+  try{
+    if (navigator.canShare && navigator.share) {
+      const resp = await fetch(url);
+      const blob = await resp.blob();
+      const file = new File([blob], `${id}.pdf`, {type:"application/pdf"});
+      if (navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          title: id,
+          text: `Load Sheet: ${id}`,
+          files: [file]
+        });
+        return;
+      }
+    }
+    const msg = encodeURIComponent(`Load Sheet ${id}\n${fullUrl}`);
+    const waBiz = "whatsapp://send?text=" + msg;
+    const waWeb = "https://wa.me/?text=" + msg;
+    window.location.href = waBiz;
+    setTimeout(()=>{ window.open(waWeb, "_blank"); }, 500);
+  }catch(e){
+    const waWeb = "https://wa.me/?text=" + encodeURIComponent(`Load Sheet ${id}\n${fullUrl}`);
+    window.open(waWeb, "_blank");
+  }
+}
+</script>
+</body>
+</html>

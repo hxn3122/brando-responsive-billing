@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Edit User • {{ company_name }}</title>
+<link href="https://unpkg.com/modern-css-reset/dist/reset.min.css" rel="stylesheet"/>
+<style>
+  body{font-family: ui-sans-serif,system-ui,Segoe UI,Roboto,Helvetica,Arial; background:#f5f7fb; color:#111;}
+  .wrap{max-width: 720px; margin: 32px auto; background:#fff; padding:24px; border-radius:16px; box-shadow: 0 10px 30px rgba(0,0,0,.06);}
+  label{font-size:12px; color:#6b7280;}
+  input{width:100%; padding:10px 12px; border:1px solid #ddd; border-radius:10px;}
+  .grid{display:grid; grid-template-columns: 1fr 1fr; gap:12px;}
+  .actions{display:flex; gap:8px; margin-top:16px;}
+  button{padding:10px 14px; border:none; border-radius:12px; cursor:pointer; font-weight:700; background:#1F6FEB; color:#fff;}
+  a.btn{padding:10px 14px; border-radius:12px; background:#111; color:#fff; text-decoration:none; font-weight:700}
+</style>
+<link href="/static/app.css" rel="stylesheet"/></head>
+<body>
+<div class="wrap">
+<h2>Edit User — {{ u.username }}</h2>
+<form method="POST">
+<div class="grid">
+<div>
+<label>Name</label>
+<input name="name" required="" value="{{ u.name }}"/>
+</div>
+<div>
+<label>Start invoice from</label>
+<input name="start_from" required="" type="number" value="{{ u.next_number }}"/>
+</div>
+<div style="display:flex; align-items:center; gap:8px">
+<label><input %}="" %}checked{%="" endif="" if="" name="is_admin" type="checkbox" u.is_admin="" {%=""/> Admin</label>
+</div>
+<div style="display:flex; align-items:center; gap:8px">
+<label><input %}="" %}checked{%="" endif="" if="" name="is_active" type="checkbox" u.is_active="" {%=""/> Active</label>
+</div>
+<div style="grid-column: span 2;">
+<label>Reset password (leave blank to keep current)</label>
+<input name="new_password" placeholder="New password" type="text"/>
+</div>
+</div>
+<div class="actions">
+<button type="submit">Save Changes</button>
+<a class="btn" href="/admin/users">Cancel</a>
+</div>
+</form>
+</div>
+</body>
+</html>
